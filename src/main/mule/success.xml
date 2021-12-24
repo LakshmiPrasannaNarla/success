@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="f6ab6827-90ad-42cc-aa32-29fbe26fa546" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="successFlow" doc:id="b25da837-50c7-4d30-b3bd-c00752abf3b3" >
+		<http:listener doc:name="Listener" doc:id="b5c003b6-c988-4944-bcb8-eb505f581965" config-ref="HTTP_Listener_config" path="/success"/>
+		<logger level="INFO" doc:name="Logger" doc:id="c8243c11-453e-476a-aece-97cbd4d4cb67" message="route2"/>
+		<ee:transform doc:name="Transform Message" doc:id="704720dc-d304-4297-89a0-8f635ae2f7e9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+"message" : "prasanna"	
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<first-successful doc:name="First Successful" doc:id="521a31dd-0371-4c7a-99e9-4da9184ae152" >
+			<route >
+				<raise-error doc:name="Raise error" doc:id="9a2af670-32c5-4fb5-9217-b20a472286a8" type="ANY"/>
+				<logger level="INFO" doc:name="Logger" doc:id="21f20635-c671-4d81-8b75-2ba8ccbd4eb4" message="first logger"/>
+			</route>
+			<route >
+				<logger level="INFO" doc:name="Logger" doc:id="c539cd3f-241b-44c3-be87-6e2ae47b3ada" message="route1"/>
+			</route>
+		</first-successful>
+		<logger level="INFO" doc:name="Logger" doc:id="2c0e6f3c-4a73-4fbf-b40e-6a4ca10e167f" message="end logger"/>
+	</flow>
+</mule>
